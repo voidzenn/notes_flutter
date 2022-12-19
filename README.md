@@ -3,6 +3,9 @@
 #### Before running app you need a DB server. Use this json-server
 - https://github.com/voidzenn/json_server
 
+Install node_modules first with this command
+- yarn
+
 Run with this command
 - flutter run
 
