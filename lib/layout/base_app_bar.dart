@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sample/util/routes.dart';
+import 'package:sample/routes/routes.dart';
 
 class BaseAppBar extends StatelessWidget implements PreferredSize {
   final String title;
@@ -9,8 +9,17 @@ class BaseAppBar extends StatelessWidget implements PreferredSize {
   @override
   Widget build(BuildContext context) {
     var routes = Routes();
+    var pathName = ModalRoute.of(context)?.settings.name;
 
     return AppBar(
+      leadingWidth: routes.isHome(pathName) ? 0 : 30,
+      leading: Visibility(
+        visible: routes.isHome(pathName) ? false : true,
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pushNamed('/'),
+        ),
+      ),
       title: Text(
         routes.currentRoute(ModalRoute.of(context)?.settings.name),
         style: const TextStyle(

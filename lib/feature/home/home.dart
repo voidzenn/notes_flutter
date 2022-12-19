@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sample/custom_widget/cw_card.dart';
+import 'package:sample/feature/view_edit/view_edit_arguments.dart';
+import 'package:sample/routes/route_home_arguments.dart';
 import 'package:sample/service/api_note.dart';
-import 'package:sample/service/api_request.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -31,6 +32,11 @@ class _HomeLocalApiState extends State<Home> {
       print('error in deleting data');
     }
     // print(id);
+  }
+
+  viewNote(int id, String title, String text) {
+    Navigator.of(context)
+        .pushNamed('/view_edit', arguments: ViewEditArguments(id, title, text));
   }
 
   delete(int id) {
@@ -69,11 +75,17 @@ class _HomeLocalApiState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: apiData
           .map(
-            (data) => CwCard(
-              widget: cardText(data),
-              button: deleteButton(data['id']),
+            (data) =>
+            InkWell(
+              onTap: () {
+                viewNote(data['id'], data['title'], data['text']);
+              },
+              child: CwCard(
+                widget: cardText(data),
+                button: deleteButton(data['id']),
+              ),
             ),
-          )
+      )
           .toList(),
     );
   }

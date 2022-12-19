@@ -7,8 +7,12 @@ class Routes {
       case '/create':
         return 'Create Note';
         break;
+      case '/view_edit':
+        return 'Edit Note';
+        break;
       default:
         return '';
+        break;
     }
   }
 

@@ -35,14 +35,9 @@ class _HomeState extends State<Home> {
   }
 
   Widget cardTemplate(data) {
-    var newData = data;
     final rnd = math.Random();
     Color getRandomColor() {
       return Color(rnd.nextInt(0xffffffff));
-    }
-
-    delete(data) {
-      newData.remove(data);
     }
 
     return Card(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sample/layout/base_app_bar.dart';
-import 'package:sample/util/routes.dart';
+import 'package:sample/routes/routes.dart';
 
 class MainBody extends StatefulWidget {
   final Widget child;
@@ -24,6 +24,10 @@ class _MainBodyState extends State<MainBody> {
       return routes.isHome(ModalRoute.of(context)?.settings.name);
     }
 
+    goToCreateView() {
+      Navigator.of(context).pushNamed('/create');
+    }
+
     return Scaffold(
       appBar: const BaseAppBar(title: "Notes"),
       body: SingleChildScrollView(
@@ -35,7 +39,7 @@ class _MainBodyState extends State<MainBody> {
         opacity: floatingButtonEnabled() ? 1 : 0,
         child: ElevatedButton(
           onPressed: () {
-            Navigator.of(context).pushNamed('/create');
+            goToCreateView();
           },
           style: ElevatedButton.styleFrom(
             shape: const CircleBorder(),

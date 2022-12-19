@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:sample/custom_widget/cw_dialog.dart';
+import 'package:sample/feature/view_edit/view_edit_arguments.dart';
 import 'package:sample/service/api_note.dart';
 
-class Create extends StatefulWidget {
-  const Create({Key? key}) : super(key: key);
+class ViewEdit extends StatefulWidget {
+  final String? title;
+  final String? text;
+
+  const ViewEdit({Key? key, this.title, this.text}) : super(key: key);
 
   @override
-  State<Create> createState() => _CreateState();
+  State<ViewEdit> createState() => _ViewEditState();
 }
 
-class _CreateState extends State<Create> {
-  final titleInputController = TextEditingController();
-  final textInputController = TextEditingController();
-  final request = ApiNote();
-
+class _ViewEditState extends State<ViewEdit> {
   String titleInput = '';
   String textInput = '';
+  var request = ApiNote();
 
   openDialog({required Widget widgetBody}) {
     showDialog(
@@ -23,11 +24,13 @@ class _CreateState extends State<Create> {
         builder: (context) => CwDialog(title: "Message", content: widgetBody));
   }
 
-  handleSave({required String inputTitle, required String inputText}) async {
+  handleUpdate(
+      {required int inputId,
+      required String inputTitle,
+      required String inputText}) async {
     bool inputEmpty = inputTitle.isEmpty || inputText.isEmpty;
     String textBody = '';
     bool isError = false;
-
     errorMsg() {
       textBody = 'Error. Please try again';
       isError = true;
@@ -39,7 +42,9 @@ class _CreateState extends State<Create> {
     }
 
     if (!inputEmpty) {
-      var response = await request.postNote(title: inputTitle, text: inputText);
+      var response = await request.updateNote(
+          id: inputId, title: inputTitle, text: inputText);
+
       if (response?.statusCode == 201 || response?.statusCode == 200) {
         textBody = 'Successfully created note';
       } else {
@@ -58,17 +63,17 @@ class _CreateState extends State<Create> {
     ));
   }
 
-  Widget createTitleTemplate() {
-    return TextField(
-        controller: titleInputController,
+  Widget createTitleTemplate(controller) {
+    return TextFormField(
+        controller: controller,
         decoration: const InputDecoration(hintText: "Title"));
   }
 
-  Widget createTextTemplate() {
-    return TextField(controller: textInputController);
+  Widget createTextTemplate(controller) {
+    return TextFormField(controller: controller);
   }
 
-  Widget saveButtonTemplate() {
+  Widget saveButtonTemplate(newId, titleControl, textControl) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -76,16 +81,15 @@ class _CreateState extends State<Create> {
           padding: const EdgeInsets.all(15),
           child: ElevatedButton(
             onPressed: () {
-              handleSave(
-                  inputTitle: titleInputController.text,
-                  inputText: textInputController.text);
-              titleInputController.clear();
-              textInputController.clear();
+              handleUpdate(
+                  inputId: newId,
+                  inputTitle: titleControl.text,
+                  inputText: textControl.text);
             },
             child: const Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(
-                  "Save",
+                  "Update",
                   style: TextStyle(fontSize: 20),
                 )),
           ),
@@ -96,14 +100,20 @@ class _CreateState extends State<Create> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as ViewEditArguments;
+    final titleInputController = TextEditingController(text: args.title);
+    final textInputController = TextEditingController(text: args.text);
+
     return Padding(
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            createTitleTemplate(),
-            createTextTemplate(),
-            saveButtonTemplate()
+            createTitleTemplate(titleInputController),
+            createTextTemplate(textInputController),
+            saveButtonTemplate(
+                args.id, titleInputController, textInputController)
           ],
         ));
   }
